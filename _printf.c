@@ -11,24 +11,25 @@
  * @return The number of characters printed (excluding the null byte used to end output to strings).
  */
 int _printf(const char *format, ...) {
+    int count;
     va_list args;
     va_start(args, format);
 
-    int count = 0; // To keep track of the number of characters printed
+    
+    
+    count = 0;
     
     while (*format != '\0') {
         if (*format == '%') {
-            format++; // Move past '%'
+            format++;
             if (*format == '\0') {
-                break; // Handle cases like "%%" at the end of the format string
+                break;
             }
             if (*format == 'c') {
-                // Print a character
                 int c = va_arg(args, int);
                 putchar(c);
                 count++;
-            } else if (*format == 's') {
-                // Print a string
+            } else if (*format == 's' ) {
                 char *s = va_arg(args, char *);
                 while (*s != '\0') {
                     putchar(*s);
@@ -36,15 +37,18 @@ int _printf(const char *format, ...) {
                     count++;
                 }
             } else if (*format == '%') {
-                // Print a literal '%'
                 putchar('%');
                 count++;
-            } else {
-                // Unsupported conversion specifier
-                // You can add error handling here if needed
+            }
+            else if (*format == 'r') {
+                putchar('%');
+                putchar(*format);
+                count++;
+            }
+            else {
+                
             }
         } else {
-            // Print regular characters
             putchar(*format);
             count++;
         }
