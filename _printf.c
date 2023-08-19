@@ -91,7 +91,12 @@ int _printf(const char *format, ...) {
             else if (*format == 'x' || *format == 'X') {
                 int i;
                 int num = va_arg(args, int);
-                char hex_digits[] = "0123456789ABCDEF";
+
+                char hex_digits_lower[] = "0123456789abcdef";
+                char hex_digits_upper[] = "0123456789ABCDEF";
+                char *hex_digits = (*format == 'x') ? hex_digits_lower : hex_digits_upper;
+                
+                
                 int max_digits = snprintf(NULL, 0, "%X", num);
                 for (i = max_digits - 1; i >= 0; i--) {
                     int digit = (num >> (i * 4)) & 0xF;
@@ -123,8 +128,8 @@ int _printf(const char *format, ...) {
             else if (*format == 'p') {
                 void *ptr = va_arg(args, void *);
                 uintptr_t address = (uintptr_t)ptr;
-                printf("0x%lX", address);
-                count += snprintf(NULL, 0, "0x%lX", address);
+                printf("0x%lx", address);
+                count += snprintf(NULL, 0, "0x%lx", address);
             }
             else {
                 putchar('%');
