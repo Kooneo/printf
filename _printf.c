@@ -14,9 +14,6 @@ int _printf(const char *format, ...) {
     int count;
     va_list args;
     va_start(args, format);
-
-    
-    
     count = 0;
     
     while (*format != '\0') {
@@ -40,13 +37,75 @@ int _printf(const char *format, ...) {
                 putchar('%');
                 count++;
             }
-            else if (*format == 'r') {
+            else if (*format == 'u') {
+                unsigned int num = va_arg(args, unsigned int);
+                unsigned int temp = num;
+                int i, digit;
+                int digit_count = 0;
+
+                do {
+                    temp /= 10;
+                    digit_count++;
+                } while (temp != 0);
+
+                while (digit_count > 0) {
+                    temp = num;
+                    for ( i = 1; i < digit_count; i++) {
+                        temp /= 10;
+                    }
+                    digit = temp % 10;
+                    putchar('0' + digit);
+                    count++;
+                    digit_count--;
+                }
+            } 
+            else if (*format == 'd' || *format == 'i') {
+                int num = va_arg(args, int);
+                printf("%d", num);
+                count += snprintf(NULL, 0, "%d", num);
+            }
+            else if (*format == 'x' || *format == 'X') {
+                int i;
+                int num = va_arg(args, int);
+                char hex_digits[] = "0123456789ABCDEF";
+                int max_digits = snprintf(NULL, 0, "%X", num);
+                for (i = max_digits - 1; i >= 0; i--) {
+                    int digit = (num >> (i * 4)) & 0xF;
+                    putchar(hex_digits[digit]);
+                    count++;
+                }
+            }
+            else if (*format == 'o') {
+                unsigned int num = va_arg(args, unsigned int);
+                unsigned int temp = num;
+                int digit_count = 0;
+                int i, digit;
+                
+                do {
+                    temp /= 8;
+                    digit_count++;
+                } while (temp != 0);
+                while (digit_count > 0) {
+                    temp = num;
+                    for (i = 1; i < digit_count; i++) {
+                        temp /= 8;
+                    }
+                    digit = temp % 8;
+                    putchar('0' + digit);
+                    count++;
+                    digit_count--;
+                }
+            }
+            else if (*format == 'p') {
+                void *ptr = va_arg(args, void *);
+                uintptr_t address = (uintptr_t)ptr;
+                printf("0x%lX", address);
+                count += snprintf(NULL, 0, "0x%lX", address);
+            }
+            else {
                 putchar('%');
                 putchar(*format);
                 count++;
-            }
-            else {
-                
             }
         } else {
             putchar(*format);
