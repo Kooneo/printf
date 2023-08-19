@@ -61,8 +61,32 @@ int _printf(const char *format, ...) {
             } 
             else if (*format == 'd' || *format == 'i') {
                 int num = va_arg(args, int);
-                printf("%d", num);
-                count += snprintf(NULL, 0, "%d", num);
+                int temp = num;
+                int digit_count = 0;
+
+                if (num < 0) {
+                    num = -num;
+                    putchar('-');
+                    count++;
+                }
+
+                do {
+                    temp /= 10;
+                    digit_count++;
+                } while (temp != 0);
+
+                while (digit_count > 0) {
+                    int i, digit;
+                    temp = num;
+
+                    for (i = 1; i < digit_count; i++) {
+                        temp /= 10;
+                    }
+                    digit = temp % 10;
+                    putchar('0' + digit);
+                    count++;
+                    digit_count--;
+                }
             }
             else if (*format == 'x' || *format == 'X') {
                 int i;
