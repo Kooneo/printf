@@ -1,74 +1,148 @@
 #include "main.h"
-#include <stdarg.h>
 
 /**
- * process_format - Handles a format specifier.
- * @fmt_ptr: Pointer to the current position in the format string.
- * @arguments: List of arguments.
+ * Print formatted output to stdout.
  *
- * Returns: Number of characters processed.
- */
-
-int process_format(const char **fmt_ptr, va_list arguments)
-{
-    int char_count = 0;
-    int (*function)(va_list);
-
-    (*fmt_ptr)++;
-
-    if (**fmt_ptr == '\0')
-    {
-        _putchar(**fmt_ptr);
-        return 1;
-    }
-
-    function = _spechandler(**fmt_ptr);
-
-    if (function)
-        char_count += function(arguments);
-    else
-    {
-        _putchar(**fmt_ptr);
-        char_count++;
-    }
-
-    return char_count;
-}
-
-/**
- * _printf - Print formatted output with custom formatting.
- * @format: Format string containing placeholders.
+ * This function implements a simplified version of the printf function that
+ * supports the following conversion specifiers: %c, %s, and %%.
  *
- * Returns: Number of characters printed.
+ * @param format The format string containing directives and text to print.
+ * @param ... Variable arguments corresponding to the format specifiers.
+ * @return The number of characters printed (excluding the null byte used to end output to strings).
  */
+int _printf(const char *format, ...) {
+    int count;
+    va_list args;
+    va_start(args, format);
+    count = 0;
+    
+    while (*format != '\0') {
+        if (*format == '%') {
+            format++;
+            if (*format == '\0') {
+                break;
+            }
+            if (*format == 'c') {
+                int c = va_arg(args, int);
+                _putchar(c);
+                count++;
+            } else if (*format == 's' ) {
+                char *s = va_arg(args, char *);
+                while (*s != '\0') {
+                    _putchar(*s);
+                    s++;
+                    count++;
+                }
+            } else if (*format == '%') {
+                _putchar('%');
+                count++;
+            }
+            else if (*format == 'u') {
+                unsigned int num = va_arg(args, unsigned int);
+                unsigned int temp = num;
+                int i, digit;
+                int digit_count = 0;
 
-int _printf(const char *format, ...)
-{
-    va_list arguments;
-    int char_count = 0;
+                do {
+                    temp /= 10;
+                    digit_count++;
+                } while (temp != 0);
 
-    if (!format || (format[0] == '%' &&
-                 (!format[1] || (format[1] == ' ' &&
-                              !format[2]))))
-        return -1;
+                while (digit_count > 0) {
+                    temp = num;
+                    for ( i = 1; i < digit_count; i++) {
+                        temp /= 10;
+                    }
+                    digit = temp % 10;
+                    _putchar('0' + digit);
+                    count++;
+                    digit_count--;
+                }
+            } 
+            else if (*format == 'd' || *format == 'i') {
+                int num = va_arg(args, int);
+                int temp = num;
+                int digit_count = 0;
 
-    va_start(arguments, format);
+                if (num < 0) {
+                    num = -num;
+                    _putchar('-');
+                    count++;
+                }
 
-    while (*format)
-    {
-        if (*format == '%')
-        {
-            char_count += process_format(&format, arguments);
-        }
-        else
-        {
+                do {
+                    temp /= 10;
+                    digit_count++;
+                } while (temp != 0);
+
+                while (digit_count > 0) {
+                    int i, digit;
+                    temp = num;
+
+                    for (i = 1; i < digit_count; i++) {
+                        temp /= 10;
+                    }
+                    digit = temp % 10;
+                    _putchar('0' + digit);
+                    count++;
+                    digit_count--;
+                }
+            }
+            else if (*format == 'x' || *format == 'X') {
+                int i;
+                int num = va_arg(args, int);
+
+                char hex_digits_lower[] = "0123456789abcdef";
+                char hex_digits_upper[] = "0123456789ABCDEF";
+                char *hex_digits = (*format == 'x') ? hex_digits_lower : hex_digits_upper;
+                
+                
+                int max_digits = snprintf(NULL, 0, "%X", num);
+                for (i = max_digits - 1; i >= 0; i--) {
+                    int digit = (num >> (i * 4)) & 0xF;
+                    _putchar(hex_digits[digit]);
+                    count++;
+                }
+            }
+            else if (*format == 'o') {
+                unsigned int num = va_arg(args, unsigned int);
+                unsigned int temp = num;
+                int digit_count = 0;
+                int i, digit;
+                
+                do {
+                    temp /= 8;
+                    digit_count++;
+                } while (temp != 0);
+                while (digit_count > 0) {
+                    temp = num;
+                    for (i = 1; i < digit_count; i++) {
+                        temp /= 8;
+                    }
+                    digit = temp % 8;
+                    _putchar('0' + digit);
+                    count++;
+                    digit_count--;
+                }
+            }
+            else if (*format == 'p') {
+                void *ptr = va_arg(args, void *);
+                uintptr_t address = (uintptr_t)ptr;
+                printf("0x%lx", address);
+                count += snprintf(NULL, 0, "0x%lx", address);
+            }
+            else {
+                _putchar('%');
+                _putchar(*format);
+                count++;
+            }
+        } else {
             _putchar(*format);
-            char_count++;
+            count++;
         }
-
         format++;
     }
 
-    va_end(arguments);
-    return char_count;
+    va_end(args);
+    return count;
 }
