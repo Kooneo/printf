@@ -1,43 +1,59 @@
 #include "main.h"
 
 /**
- * Print formatted output to stdout.
+ * _printf - formatted output to stdout.
  *
- * This function implements a simplified version of the printf function that
+ * Description: This function implements 
+ * a simplified version of the printf function that
  * supports the following conversion specifiers: %c, %s, and %%.
  *
- * @param format The format string containing directives and text to print.
+ * @format: The format string containing directives and text to print.
  * @param ... Variable arguments corresponding to the format specifiers.
- * @return The number of characters printed (excluding the null byte used to end output to strings).
+ * Return: The number of characters printed
+ * (excluding the null byte used to end output to strings).
  */
-int _printf(const char *format, ...) {
+int _printf(const char *format, ...)
+{
     int count;
     va_list args;
     va_start(args, format);
     count = 0;
     
+    if (format == NULL)
+    {
+        return (-1);
+    }
+    
+
     while (*format != '\0') {
         if (*format == '%') {
             format++;
-            if (*format == '\0') {
+            if (*format == '\0')
+            {
                 break;
             }
-            if (*format == 'c') {
+            if (*format == 'c')
+            {
                 int c = va_arg(args, int);
                 _putchar(c);
                 count++;
-            } else if (*format == 's' ) {
+            }
+            else if (*format == 's' )
+            {
                 char *s = va_arg(args, char *);
                 while (*s != '\0') {
                     _putchar(*s);
                     s++;
                     count++;
                 }
-            } else if (*format == '%') {
+            } 
+            else if (*format == '%')
+            {
                 _putchar('%');
                 count++;
             }
-            else if (*format == 'u') {
+            else if (*format == 'u')
+            {
                 unsigned int num = va_arg(args, unsigned int);
                 unsigned int temp = num;
                 int i, digit;
@@ -59,7 +75,8 @@ int _printf(const char *format, ...) {
                     digit_count--;
                 }
             } 
-            else if (*format == 'd' || *format == 'i') {
+            else if (*format == 'd' || *format == 'i')
+            {
                 int num = va_arg(args, int);
                 int temp = num;
                 int digit_count = 0;
@@ -88,7 +105,8 @@ int _printf(const char *format, ...) {
                     digit_count--;
                 }
             }
-            else if (*format == 'x' || *format == 'X') {
+            else if (*format == 'x' || *format == 'X')
+            {
                 int i;
                 int num = va_arg(args, int);
 
@@ -104,7 +122,8 @@ int _printf(const char *format, ...) {
                     count++;
                 }
             }
-            else if (*format == 'o') {
+            else if (*format == 'o')
+            {
                 unsigned int num = va_arg(args, unsigned int);
                 unsigned int temp = num;
                 int digit_count = 0;
@@ -125,7 +144,8 @@ int _printf(const char *format, ...) {
                     digit_count--;
                 }
             }
-            else if (*format == 'p') {
+            else if (*format == 'p')
+            {
                 void *ptr = va_arg(args, void *);
                 uintptr_t address = (uintptr_t)ptr;
                 printf("0x%lx", address);
