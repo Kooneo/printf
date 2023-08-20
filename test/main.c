@@ -1,10 +1,7 @@
-#include "main.h"
+#include "../main.h"
 #include <stdio.h>
-#include "_putchar.c"
-#include "_print_percent.c"
-#include "_print_string.c"
-#include "_spechandler.c"
-#include "_printf.c"
+#include "../_putchar.c"
+#include "../_printf.c"
 
 /**
  * main - test file for printf functions
