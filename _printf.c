@@ -31,10 +31,7 @@ int _printf(const char *format, ...)
 
 			if (*format == 'c')
 			{
-				int c = va_arg(args, int);
-
-				write(1, &c, 1);
-				count++;
+			print_char(args, count);
 			}
 			else if (*format == 's')
 			{

@@ -9,6 +9,6 @@
 #include <stdint.h>
 
 int _printf(const char *format, ...);
-
+int print_char(va_list args, int count)
 
 #endif
