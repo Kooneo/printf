@@ -1,65 +1,74 @@
 #include "main.h"
+#include <stdarg.h>
 
 /**
- * _printf - Print formatted output to stdout.
+ * process_format - Handles a format specifier.
+ * @fmt_ptr: Pointer to the current position in the format string.
+ * @arguments: List of arguments.
  *
- * Description: This function implements a simplified
- * version of the printf function that
- * supports the following conversion specifiers: %c, %s, and %%.
- *
- * @format: format The format string containing directives and text to print.
- * @param ... Variable arguments corresponding to the format specifiers.
- * Return: The number of characters printed
+ * Returns: Number of characters processed.
  */
+
+int process_format(const char **fmt_ptr, va_list arguments)
+{
+    int char_count = 0;
+    int (*function)(va_list);
+
+    (*fmt_ptr)++;
+
+    if (**fmt_ptr == '\0')
+    {
+        _putchar(**fmt_ptr);
+        return 1;
+    }
+
+    function = _spechandler(**fmt_ptr);
+
+    if (function)
+        char_count += function(arguments);
+    else
+    {
+        _putchar(**fmt_ptr);
+        char_count++;
+    }
+
+    return char_count;
+}
+
+/**
+ * _printf - Print formatted output with custom formatting.
+ * @format: Format string containing placeholders.
+ *
+ * Returns: Number of characters printed.
+ */
+
 int _printf(const char *format, ...)
 {
-	int count;
-	va_list args;
+    va_list arguments;
+    int char_count = 0;
 
-	va_start(args, format);
-	count = 0;
+    if (!format || (format[0] == '%' &&
+                 (!format[1] || (format[1] == ' ' &&
+                              !format[2]))))
+        return -1;
 
-	while (*format != '\0')
-	{
-		if (*format == '%')
-		{
-			format++;
-			if (*format == '\0')
-			{
-				break;
-			}
+    va_start(arguments, format);
 
-			if (*format == 'c')
-			{
-			count = print_char(args, c, count);
-			}
-			else if (*format == 's')
-			{
-				char *s = va_arg(args, char *);
+    while (*format)
+    {
+        if (*format == '%')
+        {
+            char_count += process_format(&format, arguments);
+        }
+        else
+        {
+            _putchar(*format);
+            char_count++;
+        }
 
-				while (*s != '\0')
-				{
-					write(1, s, 1);
-					s++;
-					count++;
-				}
-			}
-	else if (*format == '%')
-	{
-	char percent_char = '%';
+        format++;
+    }
 
-	write(1, &percent_char, 1);
-	count++;
-	}
-	}
-	else
-	{
-	write(1, format, 1);
-	count++;
-	}
-	format++;
-	}
-
-	va_end(args);
-	return (count);
+    va_end(arguments);
+    return char_count;
 }
